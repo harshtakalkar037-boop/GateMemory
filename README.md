@@ -1,46 +1,138 @@
-# GateMemory
+# GateMemory 📍
 
-GateMemory is an offline Android app for tagging and recognizing gate or building entrance scenes.
+### Visual Memory for Real-World Places
 
-The Android implementation is being built incrementally from the existing Python prototype in `gatememory.py`. The prototype's core recognition intent is preserved:
+> **Maps remember coordinates. GateMemory remembers what the place looks like.**
 
-- OpenCV ORB feature extraction with 1000 requested features.
-- Hamming-distance brute-force matching.
-- KNN matching with `k=2`.
-- Lowe-style ratio filtering using a 0.6 ratio.
-- Confidence as `good_matches / live_frame_descriptors`.
-- A default recognition threshold near 0.10.
-- Rejection of scenes with too few useful keypoints.
+GateMemory is an **offline-first Android application** that helps users remember and recognize physical entrances such as classrooms, laboratories, hostels, offices, apartments, parking areas, and other hard-to-identify locations.
 
-The current Android MVP includes:
+Instead of relying only on GPS coordinates or written addresses, GateMemory creates a **visual memory of a physical place** using the smartphone camera and retrieves that memory when the user encounters the same scene again.
 
-- CameraX live preview and frame analysis.
-- App-private offline tag storage.
-- OpenCV ORB descriptor extraction.
-- Hamming KNN matching and ratio-test confidence scoring.
-- Location tagging with keypoint rejection.
-- Voice note recording and playback using Android-native audio APIs.
-- Live tag quality meter based on detected keypoints.
-- Confidence progress bar and 2-frame match lock.
-- Saved location gallery with thumbnails and per-tag voice playback.
-- Privacy proof screen showing that no internet permission is requested.
-- Camera match overlay when a known gate is locked.
-- Memory Trail card with saved note, age, and confidence history.
-- Haptic feedback when a saved gate locks.
-- Scene fingerprint labels like `GATE-A7F3`.
-- In-app demo guide for quick judging.
-- One-tap demo reset for clearing local saved gates.
-- Low-light warning based on live frame brightness.
-- Short sound cue when a memory unlocks.
-- Offline voice note transcription using bundled Whisper tiny English model assets.
-- Voice notes recorded as 16 kHz mono WAV for reliable Whisper input.
-- Real-time saved-location search across name, note, and transcript.
+---
 
-Build a shareable debug APK with:
+## 🎯 The Problem
 
-```bash
-GRADLE_USER_HOME=.gradle-home ./gradlew assembleDebug
-```
+Reaching the correct location does not always mean finding the correct entrance.
 
-The APK is written to `app/build/outputs/apk/debug/app-debug.apk`.
-# GateMemory
+In campuses, hospitals, apartments, offices, hostels, parking areas, and large buildings, users may encounter:
+
+- Multiple similar-looking doors or gates
+- Poorly labelled entrances
+- Addresses that identify a building but not the exact entrance
+- Locations that are difficult to describe using text alone
+- Situations where internet connectivity is unavailable or unreliable
+
+Traditional maps are excellent at answering:
+
+> **"Where is this place?"**
+
+But they are not always designed to answer:
+
+> **"Which exact entrance am I looking at?"**
+
+### GateMemory addresses this gap through visual memory.
+
+---
+
+# 💡 Our Solution
+
+GateMemory allows a user to:
+
+1. Point the phone camera at an entrance.
+2. Give the location a name.
+3. Add a text note.
+4. Record a voice memory.
+5. Save the visual fingerprint of the scene.
+6. Return to the location later.
+7. Point the camera at the entrance again.
+8. Let GateMemory recognize the scene.
+9. Retrieve the saved location, notes, and voice memory.
+
+The core recognition experience works **directly on the device**, without requiring a backend or internet connection.
+
+---
+
+# ✨ Key Features
+
+### 📷 Visual Location Tagging
+
+Capture and save the visual appearance of a physical entrance instead of relying only on coordinates.
+
+### 🔍 Visual Recognition
+
+GateMemory compares a live camera scene with previously saved visual fingerprints to identify known entrances.
+
+### 🎙️ Voice Memory
+
+Attach a voice note to a saved location.
+
+Example:
+
+> "TY Classroom, second floor, beside the staircase."
+
+### 🤖 Offline AI Transcription
+
+Recorded voice notes can be transcribed using a bundled **Whisper Tiny English model**, allowing the memories to become searchable.
+
+### 🔎 Memory Search
+
+Search saved locations using:
+
+- Location name
+- Written notes
+- Transcribed voice notes
+
+### 📴 Offline-First
+
+The core recognition workflow is designed to operate without internet connectivity.
+
+### 🔐 Privacy-Focused
+
+Saved images, descriptors, notes, audio, and transcripts remain within the app's local storage for the core experience.
+
+### 📊 Confidence Feedback
+
+The recognition interface provides a confidence score based on the visual matching process.
+
+### 💡 Scene Quality Check
+
+Low-feature or unsuitable scenes can be rejected before saving.
+
+### 🌙 Low-Light Warning
+
+The app provides feedback when lighting conditions may affect visual recognition.
+
+### 📳 Haptic & Audio Feedback
+
+The app provides feedback when a saved visual memory is successfully recognized.
+
+---
+
+# 🧠 How It Works
+
+GateMemory uses two complementary technologies:
+
+### 1. Computer Vision — Entrance Recognition
+
+The visual recognition pipeline uses **OpenCV ORB feature extraction**.
+
+The process is approximately:
+
+```text
+Camera Frame
+     ↓
+Grayscale Conversion
+     ↓
+ORB Keypoint Detection
+     ↓
+ORB Descriptor Extraction
+     ↓
+KNN Matching (k = 2)
+     ↓
+Lowe-style Ratio Test
+     ↓
+Good Match Evaluation
+     ↓
+Confidence Calculation
+     ↓
+Known Gate / No Known Gate
